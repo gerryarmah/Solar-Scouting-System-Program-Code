@@ -1,3 +1,3 @@
 # Solar-Scouting-System-Program-Code
 
-A description of my program
+A description of my project
