@@ -33,8 +33,18 @@ def calculate_voltage():
     voltage = (raw_value / adc_resolution)* vref # Convert raw_value to voltage(a number between 0 and 3.3)
     return volage
 
+def append_data_to_file(timestamp_str,voltage):
+    try:
+        with open("voltage_data.csv", "a") as data_file:  # Open the file in append mode
+            data_file.write("(). {:.2f}\n".format(timestamp_str, voltage))
+    except Exception as e:
+        print("Error writing to file:" e)
+
 def main():
-    while True:
+  with open("voltage_data.csv", "w")as data_file:
+        data_file.write("Timestamp, Voltage \n")
+    
+  while True:
         voltage = calculate_voltage() #Store the calculated voltage from solar panel
         
         lcd.clear() #Clear the LCD screen
@@ -48,15 +58,8 @@ def main():
                                                                            timestamp[3],timestamp[4],timestamp[5])
         
         print("Timestamp: {}, Voltage: {:.2f)V".format(timestamp_str, voltage))
-        
-        
-        #Store voltage reading in csv file
-        data_file = open("Voltage_data_csv", "w")
-        data_file.write("Timestamp, Voltage\n")
-        
-        #Write the voltage and timestamp to the file
-        data_file.write("{}, {:2f}\n.format(timestamp_str,voltage))
-        data_file.flush()#Ensure dat is written to the file
+
+        append_data_to_file(timestamp_str, voltage)
         
         #Wait for the 1 second before reading the voltage
         utime.sleep(1)
@@ -73,13 +76,16 @@ def main():
         
         utime.sleep(1)
     
-main() # Call the main function for the program run
-
 try:
     main()
 except KeyboardInterrupt:
-    data_file.close() #Close the datafile when the program is interrupted
-    print("Data file closed")
-    
+    print("Program Interrupted")
+
+try:
+    with open("Voltage_data.csv","r") as data_file:
+        pass
+except OSError:
+    with open("Voltage_data.csv", "w") as data_file:
+        data_file.write("Timestamp, Volatge\n")
     
     
